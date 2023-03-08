@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+	<item
+        android:id="@+id/action_console"
+		app:showAsAction="always"
+        android:icon="@drawable/baseline_web_asset_24"
+        android:title="Console"/>
+	<item
+        android:id="@+id/action_open_in_browser"
+		app:showAsAction="always"
+        android:icon="@drawable/baseline_open_in_browser_24"
+        android:title="Open in browser"/>
+	<item
+        android:id="@+id/action_hide_action_bar"
+        android:title="Hide action bar"/>
+</menu>

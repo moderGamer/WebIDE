@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+	<PreferenceScreen
+		android:key="appScreen"
+		android:icon="@drawable/ic_adb_black_24dp"
+		android:title="Application"
+		android:iconSpaceReserved="false">
+
+		<ListPreference
+			android:defaultValue="0"
+			android:key="keyTheme"
+			android:title="Theme"
+			android:summary="%s"
+			android:entries="@array/theme_str"
+			android:entryValues="@array/theme_val"/>
+
+	</PreferenceScreen>
+
+	<PreferenceScreen
+		android:key="editorScreen"
+		android:icon="@drawable/ic_build_black_24dp"
+		android:title="Editor"
+		android:iconSpaceReserved="false">
+
+
+
+	</PreferenceScreen>
+
+	<PreferenceScreen
+		android:key="webScreen"
+		android:icon="@drawable/ic_language_black_24dp"
+		android:title="Web"
+		android:iconSpaceReserved="false">
+
+
+
+	</PreferenceScreen>
+
+</PreferenceScreen>

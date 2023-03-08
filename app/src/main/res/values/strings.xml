@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Web IDE</string>
+    <string name="sub_name">Web IDE</string>
+	<string name="action_new_project">Create new project</string>
+</resources>

@@ -1,0 +1,48 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+	<item
+        android:id="@+id/action_save"
+		app:showAsAction="always"
+        android:icon="@drawable/baseline_save_24"
+        android:title="Save file"/>
+	<item
+        android:id="@+id/action_undo"
+		app:showAsAction="always"
+        android:icon="@drawable/baseline_undo_24"
+        android:title="Undo"/>
+	<item
+        android:id="@+id/action_redo"
+		app:showAsAction="always"
+        android:icon="@drawable/baseline_redo_24"
+        android:title="Redo"/>
+	<item
+        android:id="@+id/action_file_manager"
+        app:showAsAction="always"
+        android:icon="@drawable/baseline_folder_open_24"
+        android:title="File manager"/>
+	<item
+        android:id="@+id/action_run_project"
+        android:title="Run project"/>
+	<item
+        android:id="@+id/action_run_open_file"
+        android:title="Run opened file"/>
+	<item
+        android:id="@+id/action_replace"
+        android:title="Replace"/>
+	<item
+		android:id="@+id/action_go_to_line"
+		android:title="Go to line"/>
+	<item
+		android:id="@+id/action_history"
+		android:title="History"/>
+	<group
+		android:id="@+id/group_other">
+		<item android:title="Other...">
+			<menu>
+				<item
+					android:id="@+id/action_tags"
+					android:title="Tags"/>
+			</menu>
+		</item>
+	</group>
+</menu>

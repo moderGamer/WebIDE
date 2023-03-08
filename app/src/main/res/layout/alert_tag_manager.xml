@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical">
+
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:text="Choose tag. Before adding a tag, place the cursor in the editor where you want the additional tag to appear"
+		android:layout_marginLeft="24dp"
+		android:id="@+id/patch_id"
+		android:textColor="#A4A4A4"
+		android:layout_marginRight="20dp"
+		android:textSize="14sp"
+		android:visibility="gone"/>
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/recycler_view"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_weight="1.0"/>
+
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:layout_marginTop="30dp"
+		android:gravity="right|center_vertical"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp">
+
+		<Button
+			style="?android:attr/buttonBarButtonStyle"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:text="Cancel"
+			android:id="@+id/btnCancel"/>
+
+	</LinearLayout>
+
+</LinearLayout>
+

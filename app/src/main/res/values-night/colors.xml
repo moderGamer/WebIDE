@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="colorPrimary">#FF232323</color>
+	<color name="colorPrimaryDark">#FF232323</color>
+	<color name="colorAccent">#FF5387E7</color>
+	<color name="colorControlNormal">#FFFFFFFF</color>
+	<color name="textColorPrimary">#FFFFFFFF</color>
+	<color name="textColorSecondary">#60FFFFFF</color>
+	<color name="windowBackground">#FF0F0F0F</color>
+	<color name="backgroundDialog">#FF1A1A1A</color>
+	<color name="navigationBarColor">#FF000000</color>
+	<color name="iconColorPrimary">#FFFFFFFF</color>
+	<color name="dialogTextColorPrimary">#FFFFFFFF</color>
+	<color name="windowBackgroundSymbol">#FF282828</color>
+	<color name="drawerBackground">#FF1A1A1A</color>
+
+	<color name="colorIconFileManager">#FFFFFFFF</color>
+	
+	<color name="colorLineNum">#FFE9E9E9</color>
+	<color name="colorLine">#FFE2E2E2</color>
+	<color name="colorTextLineNum">#FF838383</color>
+
+	<color name="syntax_error">#FFF2827A</color>
+	<color name="syntax_number">#FF3FB4FE</color>
+	<color name="syntax_string">#FFCE9647</color>
+	<color name="syntax_keyword">#FF5891CB</color>
+	<color name="syntax_builtin">#FFFBD172</color>
+	<color name="syntax_comment">#FF6CC684</color>
+	<color name="syntax_cursor">#FFFFFFFF</color>
+	
+	<color name="line">#20FFFFFF</color>
+
+	<color name="bgSyntax">#000000</color>
+	<color name="textSyntax">#FFFFFF</color>
+	<color name="foregroundSyntax">#2FFFFFFF</color>
+</resources>
