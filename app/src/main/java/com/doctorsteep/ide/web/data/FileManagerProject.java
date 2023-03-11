@@ -1,29 +1,40 @@
 package com.doctorsteep.ide.web.data;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.doctorsteep.ide.web.EditorActivity;
 import com.doctorsteep.ide.web.MainActivity;
 import com.doctorsteep.ide.web.R;
 import com.doctorsteep.ide.web.adapter.FileManagerAdapter;
+import com.doctorsteep.ide.web.comparator.IgnoreCaseComparator;
+import com.doctorsteep.ide.web.comparator.SortFileName;
+import com.doctorsteep.ide.web.comparator.SortFolder;
 import com.doctorsteep.ide.web.utils.FileUtils;
 import com.doctorsteep.ide.web.utils.LangSyntax;
 import com.doctorsteep.ide.web.utils.ProjectUtils;
 import com.doctorsteep.ide.web.utils.SyntaxUtils;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import com.doctorsteep.ide.web.utils.DFUtils;
 import android.widget.CheckBox;
 
@@ -51,6 +62,8 @@ public class FileManagerProject {
 	private static AlertDialog alertDialogFile;
 	private static AlertDialog alertDialogDir;
 	private static AlertDialog alertDialogRenameFile;
+
+	public static ArrayList<File> arrayListSelectedFD = new ArrayList<>();
 	
 	public static void fileManagerProject(final Context context, final String patch, final int value) {
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(((Activity)context), Data.setThemeDialog(context));
@@ -59,13 +72,17 @@ public class FileManagerProject {
 		View dialogView = inflater.inflate(R.layout.alert_manager_project, null);
 		dialogBuilder.setView(dialogView);
 
-		btnCancel = (Button) dialogView.findViewById(R.id.btnCancel);
-		btnCreate = (Button) dialogView.findViewById(R.id.btnCreate);
-		btnMain = (Button) dialogView.findViewById(R.id.btnMain);
-		textPatch = (TextView) dialogView.findViewById(R.id.patch_id);
-		mRecyclerView = (RecyclerView) dialogView.findViewById(R.id.recycler_view);
-		linBack = (LinearLayout) dialogView.findViewById(R.id.linBack);
-		linOpenProject = (LinearLayout) dialogView.findViewById(R.id.linOpenProject);
+		if (arrayListSelectedFD != null) {
+			arrayListSelectedFD.clear();
+		}
+
+		btnCancel = dialogView.findViewById(R.id.btnCancel);
+		btnCreate = dialogView.findViewById(R.id.btnCreate);
+		btnMain = dialogView.findViewById(R.id.btnMain);
+		textPatch = dialogView.findViewById(R.id.patch_id);
+		mRecyclerView = dialogView.findViewById(R.id.recycler_view);
+		linBack = dialogView.findViewById(R.id.linBack);
+		linOpenProject = dialogView.findViewById(R.id.linOpenProject);
 		
 		setListLoad(context, patch);
 		patchStorage = patch;
@@ -98,6 +115,14 @@ public class FileManagerProject {
 		btnCancel.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View p1) {
+					if (arrayListSelectedFD.size() > 0) {
+						arrayListSelectedFD.clear();
+						setListLoad(context, patch);
+						btnCancel.setText("Cancel");
+						btnCreate.setText("Create");
+						return;
+					}
+
 					if(copyPath.equals("")) {
 						alertDialog.cancel();
 					} else {
@@ -110,7 +135,46 @@ public class FileManagerProject {
 		btnCreate.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View p1) {
-					if(copyPath.equals("")) {
+					if (arrayListSelectedFD.size() > 0) {
+						ProgressDialog progressDialog = new ProgressDialog(context);
+						progressDialog.setMessage("Deleting selected...");
+						progressDialog.setCancelable(false);
+						progressDialog.show();
+
+						new Handler().postDelayed(new Runnable() {
+							@Override
+							public void run() {
+								((Activity) context).runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										for (int i = 0; i < arrayListSelectedFD.size(); i++) {
+											int finalI = i;
+											((Activity) context).runOnUiThread(new Runnable() {
+												@Override
+												public void run() {
+													Log.i("delete: ", arrayListSelectedFD.get(finalI).getAbsolutePath());
+													arrayListSelectedFD.remove(arrayListSelectedFD.get(finalI));
+													Data.deleteDF(arrayListSelectedFD.get(finalI));
+												}
+											});
+										}
+
+
+										new Handler().postDelayed(new Runnable() {
+											@Override
+											public void run() {
+												progressDialog.dismiss();
+												setListLoad(context, patch);
+											}
+										}, 200);
+									}
+								});
+							}
+						}, 200);
+						return;
+					}
+
+					if (copyPath.equals("")) {
 						showCreateMenu(context, p1, patchUpdate);
 					} else {
 						try {
@@ -161,9 +225,13 @@ public class FileManagerProject {
 	
 	public static void setListLoad(Context context, String patch) {
 		try {
-			layoutManager = new LinearLayoutManager(((Activity)context));
+			ArrayList<File> arrayList = ProjectUtils.listFiles(patch);
+			Collections.sort(arrayList, new SortFileName());
+			Collections.sort(arrayList, new SortFolder());
+
+			layoutManager = new LinearLayoutManager(context);
 			mRecyclerView.setLayoutManager(layoutManager);
-			adapter = new FileManagerAdapter(ProjectUtils.listFiles(patch), ((Activity)context));
+			adapter = new FileManagerAdapter(arrayList, context);
 			mRecyclerView.setAdapter(adapter);
 			textPatch.setText(patch);
 			patchUpdate = patch;
@@ -172,7 +240,7 @@ public class FileManagerProject {
 	}
 	
 	public static void showCreateMenu(final Context context, View view, final String patch) {
-        PopupMenu popupMenu = new PopupMenu(((Activity)context), view);
+        PopupMenu popupMenu = new PopupMenu(context, view);
         popupMenu.inflate(R.menu.create_menu);
 
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -328,55 +396,52 @@ public class FileManagerProject {
 		alertDialogRenameFile.show();
 	}
 	
-	public static void showFileDirMenu(final Context context, View view, final String patch) {
+	public static void showFileDirMenu(final Context context, View view, final File path) {
         PopupMenu popupMenu = new PopupMenu(((Activity)context), view);
         popupMenu.inflate(R.menu.file_dir_menu);
 		
 		if(popupMenu.getMenu().getItem(0) != null) {
-			if(new File(patch).isFile()) {
+			if(path.isFile()) {
 				popupMenu.getMenu().getItem(0).setTitle("Copy file");
-			} if(new File(patch).isDirectory()) {
+			} if(path.isDirectory()) {
 				popupMenu.getMenu().getItem(0).setTitle("Copy directory");
 			}
-			
+
 			if(!copyPath.equals("")) {
 				popupMenu.getMenu().getItem(0).setEnabled(false);
 			}
 		}
 
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+				@SuppressLint({"NonConstantResourceId", "SetTextI18n"})
 				@Override
 				public boolean onMenuItemClick(MenuItem item) {
 					switch (item.getItemId()) {
 						case R.id.act_delete:
-							deleteFD(context, patch);
+							deleteFD(context, path);
 							return true;
 						case R.id.act_rename:
-							if(new File(patch).isDirectory()) {
-								if(EditorActivity.patchProject.startsWith(patch)) {
+							if(path.isDirectory()) {
+								if(EditorActivity.patchProject.startsWith(path.getAbsolutePath())) {
 									Toast.makeText(context, "Error renamed! Renaming is allowed inside the project!", Toast.LENGTH_SHORT).show();
 								} else {
-									rename(context, patch);
+									rename(context, path.getAbsolutePath());
 								}
-							} if(new File(patch).isFile()) {
-								if(EditorActivity.patchFile.equals(patch)) {
+							} if(path.isFile()) {
+								if(EditorActivity.patchFile.equals(path.getAbsolutePath())) {
 									Toast.makeText(context, "Error renamed! Please close opening file", Toast.LENGTH_SHORT).show();
 								} else {
-									rename(context, patch);
+									rename(context, path.getAbsolutePath());
 								}
 							}
 							return true;
 						case R.id.act_copy_path:
-							((ClipboardManager)((Activity)context).getSystemService(((Activity)context).CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("clipboard", patch));
+							((ClipboardManager)((Activity)context).getSystemService(Context.CLIPBOARD_SERVICE))
+									.setPrimaryClip(ClipData.newPlainText("clipboard", path.getAbsolutePath()));
 							Toast.makeText(context, "Path clipboard!", Toast.LENGTH_SHORT).show();
 							return true;
 						case R.id.act_copy:
-							if(new File(patch).isFile()) {
-								//Toast.makeText(context, "File copied!", Toast.LENGTH_SHORT).show();
-							} if(new File(patch).isDirectory()) {
-								//Toast.makeText(context, "Directory copied!", Toast.LENGTH_SHORT).show();
-							}
-							copyPath = patch;
+							copyPath = path.getAbsolutePath();
 							btnCreate.setText("Paste");
 							btnCancel.setText("Cancel copy");
 							return true;
@@ -488,28 +553,49 @@ public class FileManagerProject {
 	}
 	
 	
-	public static void deleteFD(final Context context, final String patch) {
+	public static void deleteFD(final Context context, final File path) {
 		AlertDialog.Builder builderFD = new AlertDialog.Builder(((Activity)context), Data.setThemeDialog(context));
 		builderFD.setTitle("Delete")
-			.setMessage("Are you sure you want to delete \"" + new File(patch).getName() + "\"?")
+			.setMessage("Are you sure you want to delete \"" + path.getName() + "\"?")
 			.setCancelable(true)
 			.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					if(new File(patch).isDirectory()) {
-						if(ProjectUtils.deleteDirectory(new File(patch))) {
-							Toast.makeText(context, "Directory deleted!", Toast.LENGTH_SHORT).show();
-							setListLoad(context, patchUpdate);
-						} else {
-							Toast.makeText(context, "Fail deleted!", Toast.LENGTH_SHORT).show();
+					ProgressDialog progressDialog = new ProgressDialog(context);
+					progressDialog.setMessage("Deleting...");
+					progressDialog.setCancelable(false);
+					progressDialog.show();
+					new Handler().postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							((Activity) context).runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									if (path.isDirectory()) {
+										if (ProjectUtils.deleteDirectory(path)) {
+											Toast.makeText(context, String.format("Directory \"%1s\" deleted!", path.getName()), Toast.LENGTH_SHORT).show();
+											setListLoad(context, patchUpdate);
+										} else {
+											Toast.makeText(context, String.format("File \"%1s\" delete error!", path.getName()), Toast.LENGTH_SHORT).show();
+										}
+									} if (path.isFile()) {
+										if (path.delete()) {
+											Toast.makeText(context, String.format("File \"%1s\" deleted!", path.getName()), Toast.LENGTH_SHORT).show();
+											setListLoad(context, patchUpdate);
+										} else {
+											Toast.makeText(context, String.format("File \"%1s\" delete error!", path.getName()), Toast.LENGTH_SHORT).show();
+										}
+									}
+								}
+							});
+
+							new Handler().postDelayed(new Runnable() {
+								@Override
+								public void run() {
+									progressDialog.dismiss();
+								}
+							}, 200);
 						}
-					} if(new File(patch).isFile()) {
-						if(new File(patch).delete()) {
-							Toast.makeText(context, "File deleted!", Toast.LENGTH_SHORT).show();
-							setListLoad(context, patchUpdate);
-						} else {
-							Toast.makeText(context, "Fail deleted!", Toast.LENGTH_SHORT).show();
-						}
-					}
+					}, 200);
 				}
 			})
 			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

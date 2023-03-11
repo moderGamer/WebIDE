@@ -176,10 +176,10 @@ public class ProjectUtils {
             }} return projectsList;
     }
 	
-	public static ArrayList<String> listFiles(String patch) throws Exception{
-        ArrayList<String> filesList = new ArrayList<String>();  
+	public static ArrayList<File> listFiles(String patch) throws Exception{
+        ArrayList<File> filesList = new ArrayList<>();
         for (File project : new File(patch).listFiles()) {
-        	filesList.add(project.getAbsolutePath());
+        	filesList.add(project);
 		} return filesList;
     }
 	

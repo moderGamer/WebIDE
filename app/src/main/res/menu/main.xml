@@ -2,11 +2,15 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_addons_ei"
-        android:title="Addons for EI"/>
+        android:title="Addons for EI"
+		android:visible="false"/>
 	<item
         android:id="@+id/action_file_manager"
-        android:title="File manager"/>
+        android:title="File manager"
+		android:icon="@drawable/baseline_folder_open_24"
+		app:showAsAction="always"/>
 	<item
         android:id="@+id/action_settings"
-        android:title="Settings"/>
+        android:title="Settings"
+		android:visible="false"/>
 </menu>

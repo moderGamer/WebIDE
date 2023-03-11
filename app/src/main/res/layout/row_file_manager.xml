@@ -14,15 +14,12 @@
 		android:src="@drawable/baseline_folder_open_black_24"
 		android:tint="@color/colorIconFileManager"
 		android:id="@+id/type_id"
-		android:layout_marginTop="9dp"
-		android:layout_marginBottom="9dp"
-		android:layout_marginLeft="9dp"/>
+		android:padding="9dp"/>
 
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="match_parent"
 		android:text="Text"
-		android:layout_marginLeft="10dp"
 		android:id="@+id/text_id"
 		android:textSize="13sp"
 		android:textAppearance="?android:attr/textAppearanceLarge"
